@@ -5,18 +5,20 @@ from rest_framework.response import Response
 from .serializers import BookSerializer
 from .models import Book
 
-
 # Create your views here.
 
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 
 class BookList(APIView):
     """
     List all books, or create a new book.
     """
+
     def get(self, request, format=None):
         books = Book.objects.all()
         serializer = BookSerializer(books, many=True)
@@ -34,6 +36,7 @@ class BookDetail(APIView):
     """
     Retrieve, update or delete a book instance.
     """
+
     def get_object(self, pk):
         try:
             return Book.objects.get(pk=pk)
@@ -57,7 +60,6 @@ class BookDetail(APIView):
         book = self.get_object(pk)
         book.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # @api_view(['GET'])
 # def books_overview(request):
