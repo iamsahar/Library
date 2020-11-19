@@ -25,3 +25,10 @@ def book_list(request):
     books = Book.objects.all()
     serializer = BookSerializer(books, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def book_detail(request, pk):
+    tasks = Book.objects.get(id=pk)
+    serializer = BookSerializer(tasks, many=False)
+    return Response(serializer.data)
