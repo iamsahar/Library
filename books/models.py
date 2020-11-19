@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'username': True}, )
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     publication_date = models.DateField(auto_now=False, auto_now_add=False, default=timezone.now)
     description = models.TextField()
 
