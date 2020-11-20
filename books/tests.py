@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from .models import Book
 from django.urls import reverse
 
-# Create your tests here.
 
 User = get_user_model()
 
@@ -30,7 +29,7 @@ class UserTestCase(TestCase):
 
     def test_user_password(self):
         """
-        Ensure the password is created right.
+        Ensure the password is created correctly.
         """
         user_a = User.objects.get(username="sahar")
         self.assertTrue(
@@ -38,3 +37,41 @@ class UserTestCase(TestCase):
         )
 
 
+client = Client()
+
+
+class BookTest(TestCase):
+
+    def setUp(self, user=None):
+        self.author = User.objects.create(
+            username='sahar',
+            email='sahar@invalid.com',
+            password="some_123_password"
+        )
+        self.client.force_login(User.objects.get_or_create(self.author)[0])
+        self.book = Book.objects.create(
+            title="first title",
+            author=self.author,
+            publication_date="2020-11-18",
+            description="good job",
+        )
+
+    def create_book(self):
+        return self.book
+
+    def test_book_creation(self):
+        """
+        Ensure the book is created.
+        """
+        b = self.create_book()
+        self.assertTrue(isinstance(b, Book))
+        self.assertEqual(b.__str__(), b.title)
+
+    def test_book_list_view(self):
+        """
+        Ensure the book list is created correctly.
+        """
+        b = self.create_book()
+        response = self.client.get(reverse("book_list"), authentication=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(str(b.title), str(response.content))
